@@ -13,9 +13,17 @@ client=clickhouse_client.return_client()
 
 def execute_sql(day,day_format,client):
     sql_str="""
-    SELECT a.*,b.cost FROM
+    SELECT a.day
+    ,a.channel_type
+    ,a.channel
+    ,a.platform
+    ,a.country
+    ,a.offer_pkg
+    ,a.conversion
+    ,a.revenue 
+    ,b.cost FROM
     (select substring(time_slot,1,8) day ,channel_type ,channel
-    ,case when lower(platform) = 'ios' then 1 ELSE 2 END platform
+    ,case when lower(platform) = 'ios' then 2 ELSE 1 END platform
     ,country,offer_pkg
     ,sum(CASE WHEN event_type != '1' THEN 1 ELSE 0 END ) conversion
     ,sum(CASE WHEN event_type != '1' THEN payout   ELSE 0 END) revenue
