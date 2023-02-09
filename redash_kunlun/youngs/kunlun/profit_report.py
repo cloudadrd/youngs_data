@@ -14,7 +14,7 @@ client=clickhouse_client.return_client()
 def execute_sql(day,day_format,client):
     sql_str="""
         select day,adtype,slot,country,user_id,channel,sum(revenue),sum(cost) from kunlun_report
-        where day = '{day}' and (revenue != 0 or cost != 0) group by day,adtype,slot,country,user_id,channel
+        where day = '{day}' and (revenue != 0 or cost != 0) and user_id != 'nan' and country not like '%-%' group by day,adtype,slot,country,user_id,channel
         """.format(day=day)
     print(sql_str)
 
@@ -44,7 +44,7 @@ def get_mysql():
     cur.execute(channel_type_sql)
     channel_df =pd.DataFrame(list(cur.fetchall()),columns=['channel','channel_type'])
     merge_user_df = pd.merge(df, user_df, how = 'left',on=['user_id'])
-    all_df = pd.merge(merge_user_df,channel_df, how = 'left' , on = ['channel'])    
+    all_df = pd.merge(merge_user_df,channel_df, how = 'left' , on = ['channel'])
     all_df = all_df.loc[:,['date','adtype','slot','country','user_id','revenue','cost','channel_type','user_name','account_email']]
     all_df = all_df.groupby(['date','adtype','slot','country','user_id','channel_type','user_name','account_email'],axis=0,as_index=False).sum()
     conn = create_engine(

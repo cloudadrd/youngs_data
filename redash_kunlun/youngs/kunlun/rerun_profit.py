@@ -44,7 +44,7 @@ def get_mysql():
     cur.execute(channel_type_sql)
     channel_df =pd.DataFrame(list(cur.fetchall()),columns=['channel','channel_type'])
     merge_user_df = pd.merge(df, user_df, how = 'left',on=['user_id'])
-    all_df = pd.merge(merge_user_df,channel_df, how = 'left' , on = ['channel'])    
+    all_df = pd.merge(merge_user_df,channel_df, how = 'left' , on = ['channel'])
     all_df = all_df.loc[:,['date','adtype','slot','country','user_id','revenue','cost','channel_type','user_name','account_email']]
     all_df = all_df.groupby(['date','adtype','slot','country','user_id','channel_type','user_name','account_email'],axis=0,as_index=False).sum()
     conn = create_engine(
@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
     clickhouse_client = clickhouse_util()
     client=clickhouse_client.return_client()
-    ys_day = datetime.datetime.today() - datetime.timedelta(days=1)
+    ys_day = datetime.datetime.today() - datetime.timedelta(days=int(sys.argv[1]))
     day = str(ys_day.strftime('%Y%m%d'))
     day_format = str(ys_day.strftime('%Y-%m-%d'))
     print(day_format)

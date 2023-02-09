@@ -1,0 +1,56 @@
+40 2 * * *  /usr/sbin/logrotate /etc/logrotate.conf
+44 2 * * * cd /opt && /usr/local/bin/python3 ssp_offer_new.py > log_offer_new 2>log_offer_new.err
+5 9 * * * cd /opt && /usr/local/bin/python3 NetWork_conv.py > NetWork_conv 2> NetWork_conv.err
+5 * * * * cd /opt/ReportApi/scripts/ssp && bash ssp_cron.sh
+25 0 * * * cd /opt/ReportApi/scripts/ssp && bash day_report_ssp.sh
+35 0 * * * cd /opt/ReportApi/scripts/ssp && bash day_offer_num_ssp.sh
+20 4 * * * cd /opt/ReportApi/scripts/ssp && python3 cloudmobi_af_cvr_install.py
+22 */1 * * * cd /opt/ReportApi/scripts/ssp && python3 direct_conversion.py
+15 1 * * * cd /opt/ReportApi/scripts/ssp && bash ipo_conversion.sh
+30 */1 * * * cd /opt/ReportApi/scripts/alarm/clickhouse && python3 buzz_alarm.py
+30 */1 * * * cd /opt/ReportApi/scripts/alarm && python3 real_data_email.py
+0 1 * * * cd /opt/ReportApi/scripts/ssp && bash ssp_huk.sh
+*/28 * * * * cd /opt/ReportApi/scripts/sdk && python3 cloudmobi_cvr.py >> log 2>>log.err
+20 */12 * * * cd /opt/ReportApi/scripts/ssp && bash click_redirect.sh
+11 * * * * cd /opt/ReportApi/scripts/up_pb && /usr/local/bin/python3 pb_up.py 1>/opt/ReportApi/scripts/up_pb/pb.log 2>/opt/ReportApi/scripts/up_pb/pb.err
+
+
+
+# 添加IPO相关代码
+45 2 * * * cd /mnt/s3/IPO/bin && bash run.sh >> log 2>>log.err
+*/30 * * * * cd /opt/new_ssp/ && python3 af_report_cap.py
+05 * * * * cd /opt/new_ssp/ && python3 af_report.py
+*/1 * * * * /opt/cloudwatch_crons/TCP-NOT-ESTAB-cron.sh
+*/1 * * * * /opt/cloudwatch_crons/MemUsage-cron.sh
+*/1 * * * * /opt/cloudwatch_crons/DiskUsage-0-cron.sh
+*/1 * * * * /opt/cloudwatch_crons/DiskUsage-1-cron.sh
+*/1 * * * * /opt/cloudwatch_crons/CPU-Usage-cron.sh
+*/1 * * * * /opt/cloudwatch_crons/Load-cron.sh
+*/1 * * * * /opt/cloudwatch_crons/TCP-ESTAB-cron.sh
+*/1 * * * * /opt/cloudwatch_crons/TCP-TOTAL-cron.sh
+*/1 * * * * /opt/cloudwatch_crons/nginx-cron.sh
+
+# model
+20 2 * * * cd /opt/sagemaker && python3 Model_device_num.py
+00,10,20,30,40,50 * * * * cd /opt/sagemaker/control_click && python3 black_buzz_install.py >> buzz_install.log
+
+#kunlun crm
+00 01 * * * cd /opt/kunlun/ && sh run_kunlun_report.sh >> /opt/kunlun/log/kunlun.log
+45 03 * * * cd /opt/kunlun/ && sh run.sh >> /opt/kunlun/log/report.log
+
+#updata offer info to clickhouse
+01 * * * * python3 /opt/kunlun/ck_offer.py >> /opt/kunlun/log/offer.log
+
+#rerun_summer
+*/2 * * * * cd /opt/ReportApi/scripts/ssp && python3 rerun_summer.py >> summer.log
+
+#youngs_report
+10 01 * * * python3 /opt/youngs/day_report.py >> /opt/youngs/log/day.log && python3 /opt/youngs/yoho_report.py >> /opt/youngs/log/yoho.log
+10 * * * * python3 /opt/youngs/youngs_hour_report.py >> /opt/youngs/log/hour.log
+10 00 * * * python3 /opt/youngs/youngs_day_report.py >> /opt/youngs/log/day.log
+
+#cloudmobi_buzz to clickhouse
+10 * * * * python3 /opt/youngs/buzz.py >> /opt/youngs/log/buzz.log
+
+#label device number to clickhouse
+00 01 * * * python3 /opt/youngs/device_count.py >> /opt/youngs/log/device_count.py
